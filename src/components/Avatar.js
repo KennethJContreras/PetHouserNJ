@@ -1,5 +1,14 @@
-export default function Avatar() {
+export default function Avatar({ nombre, imagen }) {
     return (
-        <img class="object-cover w-10 h-10 rounded-full" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&h=764&q=100" alt="" />
+        <div className="flex items-center gap-x-2">
+            <img 
+                className="object-cover w-10 h-10 rounded-full" 
+                src={imagen ? `/${imagen}` : '/anonymous-profile.webp'} 
+                alt="Avatar" 
+            />
+            <div>
+                <h1 className="text-xl font-semibold text-gray-400 capitalize">{nombre}</h1>
+            </div>
+        </div>
     )
 }

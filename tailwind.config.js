@@ -1,4 +1,3 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -7,12 +6,24 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        primary: {
+          light: '#111827', 
+          DEFAULT: '#111827', // azul
+          dark: '#4c1d95', 
+        },
+        secondary: {
+          light: '#d2f54c', 
+          DEFAULT: '#C9FD02', // amarillo
+          dark: '#134e4a', 
+        },
+        customColor: '#f97316', // Ejemplo: Color naranja personalizado
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/forms')],
 };

@@ -16,14 +16,23 @@
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+.bg-cover::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("../../public/bg-collage-pets.jfif");
+  background-position: center;
+  background-repeat: repeat;
+  filter: brightness(40%) blur(2px);
+  z-index: -1;
+}
+
+.bg-custom-gradient {
+  background: linear-gradient(to bottom, #ffffff, #cccccc);
+  background-attachment: fixed; /* Esto asegura que el fondo no se mueva con el scroll */
 }
 
 @layer utilities {

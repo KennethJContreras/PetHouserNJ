@@ -1,112 +1,135 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import {
-  Dialog,
-  DialogPanel,
-  Disclosure,
-  DisclosureButton,
-  Popover,
-  PopoverButton,
-  PopoverGroup,
-  PopoverPanel,
-} from '@headlessui/react'
-import Avatar from './Avatar'
+import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import Avatar from './Avatar';
+import Link from 'next/link';
+import { GetUserInfo } from '@/services/users';
+import { useEffect, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { EvaluateResponse } from '@/services/requestEvaliuator';
 
-const links = [
-  { name: 'Adoptar', description: 'Get a better understanding of your traffic', href: '#', key: 1 },
-  { name: 'Mensajeria', description: 'Speak directly to your customers', href: '#', key: 2 },
-  { name: 'Historias', description: 'Your customers’ data will be safe and secure', href: '#', key: 3 }
-]
+const subnavegacion = [
+  { etiqueta: "Tu perfil", href: "#" },
+  { etiqueta: "Configuraciones", href: "#" },
+  { etiqueta: "Salir", href: "/login" }
+];
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ');
+}
 
 export default function Navbar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const router = useRouter();
+  const pathname = usePathname();
+  const [username, setUsername] = useState("");
+  const [lastname, setLastname] = useState("");
+
+  useEffect(() => {
+    GetUserInfo().then((response) => {
+      setUsername(response.firstname);
+      setLastname(response.lastname);
+    }).catch((error) => {
+      const e = EvaluateResponse(error);
+      if (e !== "") {
+        router.push(e);
+      }
+    });
+  }, []);
+
+  const navegacion = [
+    { name: 'Inicio', href: '/inicio', current: pathname === '/inicio' },
+    { name: 'Adoptar', href: '/adoptar', current: pathname === '/adoptar' },
+    { name: 'Historias', href: '/historias', current: pathname === '/historias' },
+    { name: 'Mensajería', href: '/mensajeria', current: pathname === '/mensajeria' },
+  ];
 
   return (
-    <header className="bg-white">
-      <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
-        <div className="flex lg:flex-1">
-          <a href="#" className="-m-1.5 p-1.5">
-            <span className="sr-only">Your Company</span>
-            <Avatar />
-          </a>
-        </div>
-        <div className="flex lg:hidden">
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(true)}
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
-          >
-            <span className="sr-only">Open main menu</span>
-          </button>
-        </div>
-        <PopoverGroup className="hidden lg:flex lg:gap-x-12">
-          <Popover className="relative">
-            <PopoverButton className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">
-              Product
-            </PopoverButton>
-
-            <PopoverPanel
-              transition
-              className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5 transition data-[closed]:translate-y-1 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in"
-            >
-              <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
-              </div>
-            </PopoverPanel>
-          </Popover>
-
-          {links.map((link) => (
-            <a key={link.key} href="#" className="text-sm font-semibold leading-6 text-gray-900">
-              {link.name}</a>
-          ))}
-        </PopoverGroup>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-            Log in <span aria-hidden="true">&rarr;</span>
-          </a>
-        </div>
-      </nav>
-      <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
-        <div className="fixed inset-0 z-10" />
-        <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-          <div className="flex items-center justify-between">
-            <a href="#" className="-m-1.5 p-1.5">
-              <span className="sr-only">Your Company</span>
-              <img
-                alt=""
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                className="h-8 w-auto"
-              />
-            </a>
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(false)}
-              className="-m-2.5 rounded-md p-2.5 text-gray-700"
-            >
-              <span className="sr-only">Close menu</span>
-            </button>
+    <Disclosure as="nav" className="bg-primary">
+      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+        <div className="relative flex h-16 items-center justify-between">
+          <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+            {/* Mobile menu button */}
+            <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+              <span className="absolute -inset-0.5" />
+              <span className="sr-only">Open main menu</span>
+              <Bars3Icon aria-hidden="true" className="block h-6 w-6 group-data-[open]:hidden" />
+              <XMarkIcon aria-hidden="true" className="hidden h-6 w-6 group-data-[open]:block" />
+            </DisclosureButton>
           </div>
-          <div className="mt-6 flow-root">
-            <div className="-my-6 divide-y divide-gray-500/10">
-              <div className="space-y-2 py-6">
-                <Disclosure as="div" className="-mx-3">
-                  <DisclosureButton className="group flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                    Product
-                  </DisclosureButton>
-                </Disclosure>
-              </div>
-              <div className="py-6">
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                >
-                  Log in
-                </a>
+          <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+            <div className="flex flex-shrink-0 items-center">
+              <img
+                alt="Your Company"
+                src="/logo.png"
+                className="h-10 w-auto"
+              />
+            </div>
+            <div className="hidden sm:ml-6 sm:block">
+              <div className="flex space-x-4">
+                {navegacion.map((item) => (
+                  <Link key={item.name} href={item.href}>
+                    <div
+                      aria-current={item.current ? 'page' : undefined}
+                      className={classNames(
+                        item.current ? 'bg-gray-900 text-secondary' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                        'rounded-md px-3 py-2 text-sm font-medium',
+                      )}
+                    >
+                      {item.name}
+                    </div>
+                  </Link>
+                ))}
               </div>
             </div>
           </div>
-        </DialogPanel>
-      </Dialog>
-    </header>
-  )
+          <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+            {/* Profile dropdown */}
+            <Menu as="div" className="relative ml-3">
+              <div>
+                <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                  <span className="absolute -inset-1.5" />
+                  <span className="sr-only">Open user menu</span>
+                  <Avatar nombre={username + ' ' + lastname} />
+                </MenuButton>
+              </div>
+              <MenuItems
+                transition
+                className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+              >
+                {subnavegacion.map((item) => (
+                  <MenuItem key={item.etiqueta}>
+                    <Link href={item.href}>
+                      <div className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
+                        {item.etiqueta}
+                      </div>
+                    </Link>
+                  </MenuItem>
+                ))}
+              </MenuItems>
+            </Menu>
+          </div>
+        </div>
+      </div>
+
+      <DisclosurePanel className="sm:hidden">
+        <div className="space-y-1 px-2 pb-3 pt-2">
+          {navegacion.map((item) => (
+            <Link key={item.name} href={item.href}>
+              <div
+                aria-current={item.current ? 'page' : undefined}
+                className={classNames(
+                  item.current ? 'bg-gray-900 text-secondary' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                  'rounded-md px-3 py-2 text-sm font-medium',
+                )}
+              >
+                {item.name}
+              </div>
+            </Link>
+          ))}
+        </div>
+      </DisclosurePanel>
+    </Disclosure>
+  );
 }
+``
